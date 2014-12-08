@@ -21,92 +21,106 @@ import java.util.ArrayList;
 public class Cube {
     
     private static final GeometryFactory GF = new GeometryFactory();
-    private ArrayList<ArrayList<Coordinate>> faces;
-    
-    
+    private Coordinate c;
+    private int l;
 
-    public Cube(ArrayList<Coordinate> sommets) {
-        this.faces = faces;
-        
-        
-        
+    public Cube(Coordinate c, int l) {
+        this.c = c;
+        this.l = l;
     }
+    
+    
+public ArrayList<Coordinate> construireBase (Coordinate c, int l){
+    ArrayList<Coordinate> pointsSol = new ArrayList<>();
+        pointsSol.add(c);
+        pointsSol.add(new Coordinate(c.x+l,c.y,c.z));
+        pointsSol.add(new Coordinate(c.x+l,c.y+l,c.z));
+        pointsSol.add(new Coordinate(c.x,c.y+1,c.z));
+        //pointsSol.add(c);
+        
+       
+        
+        //Polygon sol = GF.createPolygon(new LinearRing(new CoordinateArraySequence(pointsSol
+        //.toArray(new Coordinate[pointsSol.size()])), GF), null);
+        
+        return pointsSol;
+}
+ 
     
 public GeometryCollection construireCube(Coordinate c, int l) {
     
-        for (int k=0;k<2;k++){
+       /* for (int k=0;k<2;k++){
             for (int j=0;j<2;j++){
                 for (int i=0;i<2;i++){
-                Coordinate sommet = new Coordinate(c.x+1,c.y+j,c.z);
-                faces.get(0).add(sommet);
+                Coordinate sommet = new Coordinate(c.x+i,c.y+j,c.z+k);
+                faces.get(k).add(sommet);
+                   
             
                 }
-            }
-        }
-        
-        Polygon sol = GF.createPolygon(new LinearRing(new CoordinateArraySequence((Coordinate[]) (faces.get(0))
-        .toArray(new Coordinate[(faces.get(0)).size()])), GF), null);
-        
-        for (int i=4;i<8;i++){
-            faces.get(5).add(sommets.get(i));
-        }
-        
-        
-        
+            } System.out.println(faces.get(k));
+        } */
     
+    ArrayList<Coordinate> pointsSol = new ArrayList<>();
+        pointsSol.add(c);
+        pointsSol.add(new Coordinate(c.x+l,c.y,c.z));
+        pointsSol.add(new Coordinate(c.x+l,c.y+l,c.z));
+        pointsSol.add(new Coordinate(c.x,c.y+1,c.z));
+        pointsSol.add(c);
+        
        
-    
-    
         
         Polygon sol = GF.createPolygon(new LinearRing(new CoordinateArraySequence(pointsSol
         .toArray(new Coordinate[pointsSol.size()])), GF), null);
+       
         
         ArrayList<Coordinate> pointsMur1 = new ArrayList<>();
-        pointsMur1.add(new Coordinate(0,0,0));
-        pointsMur1.add(new Coordinate(0,0,1));
-        pointsMur1.add(new Coordinate(0,1,1));
-        pointsMur1.add(new Coordinate(0,1,0));
-        pointsMur1.add(new Coordinate(0,0,0));
+        pointsMur1.add(c);
+        pointsMur1.add(new Coordinate(c.x+l,c.y,c.z));
+        pointsMur1.add(new Coordinate(c.x+l,c.y,c.z+l));
+        pointsMur1.add(new Coordinate(c.x,c.y,c.z+l));
+        pointsMur1.add(c);
         
         Polygon mur1 = GF.createPolygon(new LinearRing(new CoordinateArraySequence(pointsMur1
         .toArray(new Coordinate[pointsMur1.size()])), GF), null);
         
         ArrayList<Coordinate> pointsMur2 = new ArrayList<>();
-        pointsMur2.add(new Coordinate(0,1,0));
-        pointsMur2.add(new Coordinate(0,1,1));
-        pointsMur2.add(new Coordinate(1,1,1));
-        pointsMur2.add(new Coordinate(1,1,0));
-        pointsMur2.add(new Coordinate(0,1,0));
+        pointsMur2.add(new Coordinate(c.x,c.y+l,c.z));
+        pointsMur2.add(new Coordinate(c.x,c.y+l,c.z+l));
+        pointsMur2.add(new Coordinate(c.x+l,c.y+l,c.z+l));
+        pointsMur2.add(new Coordinate(c.x+l,c.y+l,c.z));
+        pointsMur2.add(new Coordinate(c.x,c.y+l,c.z));
         
         Polygon mur2 = GF.createPolygon(new LinearRing(new CoordinateArraySequence(pointsMur2
         .toArray(new Coordinate[pointsMur2.size()])), GF), null);
         
         ArrayList<Coordinate> pointsMur3 = new ArrayList<>();
-        pointsMur3.add(new Coordinate(1,1,0));
-        pointsMur3.add(new Coordinate(1,1,1));
-        pointsMur3.add(new Coordinate(1,0,1));
-        pointsMur3.add(new Coordinate(1,0,0));
-        pointsMur3.add(new Coordinate(1,1,0));
+        pointsMur3.add(new Coordinate(c.x+l,c.y+l,c.z));
+        pointsMur3.add(new Coordinate(c.x+l,c.y+l,c.z+l));
+        pointsMur3.add(new Coordinate(c.x+l,c.y,c.z+l));
+        pointsMur3.add(new Coordinate(c.x+l,c.y,c.z));
+        pointsMur3.add(new Coordinate(c.x+l,c.y+l,c.z));
+        
         
         Polygon mur3 = GF.createPolygon(new LinearRing(new CoordinateArraySequence(pointsMur3
         .toArray(new Coordinate[pointsMur3.size()])), GF), null);
         
         ArrayList<Coordinate> pointsMur4 = new ArrayList<>();
-        pointsMur4.add(new Coordinate(1,0,0));
-        pointsMur4.add(new Coordinate(1,0,1));
-        pointsMur4.add(new Coordinate(0,0,1));
-        pointsMur4.add(new Coordinate(0,0,0));
-        pointsMur4.add(new Coordinate(1,0,0));
+        pointsMur4.add(new Coordinate(c.x+l,c.y,c.z));
+        pointsMur4.add(new Coordinate(c.x+l,c.y,c.z+l));
+        pointsMur4.add(new Coordinate(c.x,c.y,c.z+l));
+        pointsMur4.add(new Coordinate(c.x,c.y,c.z));
+        pointsMur4.add(new Coordinate(c.x+l,c.y,c.z));
+
         
         Polygon mur4 = GF.createPolygon(new LinearRing(new CoordinateArraySequence(pointsMur4
         .toArray(new Coordinate[pointsMur4.size()])), GF), null);
         
         ArrayList<Coordinate> pointsToit = new ArrayList<>();
-        pointsToit.add(new Coordinate(1,1,0));
-        pointsToit.add(new Coordinate(1,1,1));
-        pointsToit.add(new Coordinate(1,0,1));
-        pointsToit.add(new Coordinate(1,0,0));
-        pointsToit.add(new Coordinate(1,1,0));
+        pointsToit.add(new Coordinate(c.x,c.y,c.z+l));
+        pointsToit.add(new Coordinate(c.x+l,c.y,c.z+l));
+        pointsToit.add(new Coordinate(c.x+l,c.y+l,c.z+l));
+        pointsToit.add(new Coordinate(c.x,c.y+1,c.z+l));
+        pointsToit.add(new Coordinate(c.x,c.y,c.z+l));
         
         Polygon toit = GF.createPolygon(new LinearRing(new CoordinateArraySequence(pointsToit
         .toArray(new Coordinate[pointsToit.size()])), GF), null);
@@ -120,7 +134,8 @@ public GeometryCollection construireCube(Coordinate c, int l) {
         faces[5] = toit;
         
         GeometryCollection cube = new GeometryCollection(faces,GF);
-        
+        /*System.out.println(cube);
+        System.out.println(cube.getNumPoints());*/
         return cube;
         
 }
