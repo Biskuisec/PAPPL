@@ -5,77 +5,78 @@
 package pappl;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Polygon;
+import java.util.ArrayList;
 
 /**
  *
  * @author avinesse
  */
 public class Shadow {
-    
-    final static int ORIGIN_X =0;
-    final static int ORIGIN_Y =0;
-    private Coordinate direction;
+
+    final int ORIGIN_X = 0;
+    final int ORIGIN_Y = 0;
     private double altitude;
     private double azimuth;
 
     /**
      * Constructeur de test
+     *
      * @param direction
      * @param altitude
-     * @param azimuth 
+     * @param azimuth
      */
-    public Shadow(Coordinate direction, double altitude, double azimuth) {
-        this.direction = direction;
+    public Shadow(double altitude, double azimuth) {
         this.altitude = altitude;
         this.azimuth = azimuth;
     }
-    
-    
-    public Coordinate calculateDirection (double altitude, double azimuth)
-    {
-        Coordinate direction = new Coordinate ();
-        double length = 1/(Math.tan(altitude));
-        direction.x= Math.cos(azimuth)*length;
-        direction.y= Math.sin(azimuth)*length;
-        
+
+    /**
+     * On calcule la direction du soleil
+     * @param altitude
+     * @param azimuth
+     * @return
+     */
+    public Coordinate calculateDirection(double altitude, double azimuth) {
+        Coordinate direction = new Coordinate();
+        double length = 1 / (Math.tan(altitude));
+        direction.x = Math.cos(azimuth) * length;
+        direction.y = Math.sin(azimuth) * length;
+
         return direction;
     }
 
-    
-   public Coordinate projection (Coordinate c, double h)
-   {
-       Coordinate project = new Coordinate ();
-       project.x = c.x + direction.x*height; 
-       project.y = c.y + direction.y*height;
-       return project;
-   }
-        
-        
-        int height = 5;
-        
-        Coordinate a = new Coordinate (0,0);
-        Coordinate b = new Coordinate (0,0);
-        Coordinate _a = new Coordinate (0,0);
-        Coordinate _b = new Coordinate (0,0);
-        
-        
-        
-        //System.out.println(carre.getCoordinate());        
-        //System.out.println(carre.getCoordinate());
-        
-        
+    public Coordinate projection(Coordinate c, double h, Coordinate direction) {
+        Coordinate project = new Coordinate();
+        project.x = c.x + direction.x * h;
+        project.y = c.y + direction.y * h;
+        return project;
+    }
 
+    public void createShadow(ArrayList<Coordinate> base, double height, Coordinate direction) {
+        Coordinate a = new Coordinate(0, 0);
+        Coordinate b = new Coordinate(0, 0);
+        Coordinate _a = new Coordinate(0, 0);
+        Coordinate _b = new Coordinate(0, 0);
 
-for (int i = 0; i < carre.size()-1; i ++) {
-a.x = carre.get(i).x-ORIGIN_X;
-a.y = carre.get(i).y-ORIGIN_Y;
+        for (int i = 0; i < base.size() - 1; i++) {
+            a.x = base.get(i).x - ORIGIN_X;
+            a.y = base.get(i).y - ORIGIN_Y;
+            b.x = base.get(i + 1).x - ORIGIN_X;
+            b.y = base.get(i + 1).y - ORIGIN_Y;
 
-b.x = carre.get(i+1).x-ORIGIN_X;
-b.y = carre.get(i+1).y-ORIGIN_Y;
+            _a.x = projection(a, height, direction).x;
+            _a.y = projection(a, height, direction).y;
+            _b.x = projection(b, height, direction).x;
+            _b.y = projection(b, height, direction).y;
+
+            System.out.println(_a);
+            System.out.println(_b);
 
 
 
-    System.out.println(_a);
-    System.out.println(_b);
- 
+
+
+        }
+    }
 }

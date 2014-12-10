@@ -29,7 +29,12 @@ public class Cube {
         this.l = l;
     }
     
-    
+    /**
+     * Construction de la base d'un cube (carré) à partir de son origine et de la longueur de l'arête
+     * @param c
+     * @param l
+     * @return 
+     */
 public ArrayList<Coordinate> construireBase (Coordinate c, int l){
     ArrayList<Coordinate> pointsSol = new ArrayList<>();
         pointsSol.add(c);
@@ -46,7 +51,13 @@ public ArrayList<Coordinate> construireBase (Coordinate c, int l){
         return pointsSol;
 }
  
-    
+    /**
+     * Construction d'un cube à partir de son origine et longueur de son arête
+     * Gestion du 3D par JTS ?
+     * @param c
+     * @param l
+     * @return 
+     */
 public GeometryCollection construireCube(Coordinate c, int l) {
     
        /* for (int k=0;k<2;k++){
