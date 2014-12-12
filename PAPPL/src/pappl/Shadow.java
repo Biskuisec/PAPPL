@@ -18,11 +18,11 @@ public class Shadow {
     final int ORIGIN_Y = 0;
     private double altitude;
     private double azimuth;
+    private SunPosition sun;
 
     /**
      * Constructeur de test
      *
-     * @param direction
      * @param altitude
      * @param azimuth
      */
@@ -30,6 +30,15 @@ public class Shadow {
         this.altitude = altitude;
         this.azimuth = azimuth;
     }
+
+    public Shadow(SunPosition sun1, double lat, double lon) {
+        this.sun = sun1;
+        this.altitude = SunPosition.getPosition(sun1.getDate(),lat,lon).get(0);
+        this.azimuth = SunPosition.getPosition(sun1.getDate(),lat,lon).get(1);
+        
+    }
+    
+    
 
     /**
      * On calcule la direction du soleil
