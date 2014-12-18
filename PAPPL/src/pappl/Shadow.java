@@ -48,7 +48,7 @@ public class Shadow {
      */
     public Coordinate calculateDirection(double altitude, double azimuth) {
         Coordinate direction = new Coordinate();
-        double length = 1 / (Math.tan(altitude));
+        double length = 1.0 / (Math.tan(altitude));
         direction.x = Math.cos(azimuth) * length;
         direction.y = Math.sin(azimuth) * length;
 

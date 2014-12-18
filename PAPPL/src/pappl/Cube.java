@@ -58,18 +58,9 @@ public ArrayList<Coordinate> construireBase (Coordinate c, int l){
      * @param l
      * @return 
      */
-public GeometryCollection construireCube(Coordinate c, int l) {
+/*public GeometryCollection construireCube(Coordinate c, int l) {
     
-       /* for (int k=0;k<2;k++){
-            for (int j=0;j<2;j++){
-                for (int i=0;i<2;i++){
-                Coordinate sommet = new Coordinate(c.x+i,c.y+j,c.z+k);
-                faces.get(k).add(sommet);
-                   
-            
-                }
-            } System.out.println(faces.get(k));
-        } */
+  
     
     ArrayList<Coordinate> pointsSol = new ArrayList<>();
         pointsSol.add(c);
@@ -145,10 +136,10 @@ public GeometryCollection construireCube(Coordinate c, int l) {
         faces[5] = toit;
         
         GeometryCollection cube = new GeometryCollection(faces,GF);
-        /*System.out.println(cube);
-        System.out.println(cube.getNumPoints());*/
+        System.out.println(cube);
+        System.out.println(cube.getNumPoints());
         return cube;
         
-}
+}*/
     
 }
