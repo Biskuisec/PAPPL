@@ -58,12 +58,11 @@ public class PAPPL {
  */
         //shadow.createShadow(carre, height,direction); 
 
-       double rad = Math.PI / 180;
         Date now = new Date(new java.util.Date().getTime());
-        //System.out.println(new java.util.Date().getTime());
+        System.out.println(new java.util.Date().getTime());
         //SunPosition soleil = new SunPosition(now);
-        double lat = 47.279229;
-        double lng =  0.0878906 ;
+        double lat = 47.2484747;
+        double lng =  -1.5485036 ;
         
         
         System.out.println(SunPosition.getPosition(now, lat, lng).get(0));
