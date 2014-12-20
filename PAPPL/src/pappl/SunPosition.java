@@ -11,6 +11,7 @@ import java.util.Date;
 
 /**
  * Code from https://github.com/mncaudill/SunCalc-Java/blob/master/src/main/java/com/nolancaudill/suncalc/SunCalc.java
+ * Based on http://aa.quae.nl/en/reken/zonpositie.html
  * @author Bertille
  */
 public class SunPosition {
@@ -51,14 +52,14 @@ public class SunPosition {
         return date.getTime() / dayMs - 0.5 + J1970;
     }
 
-    private static Date julianDateToDate(double j) {
+   /* private static Date julianDateToDate(double j) {
         return new Date(Math.round((j + 0.5 - J1970) * dayMs));
-    }
+    }*/
 
 	// general sun calculations
-    private static long getJulianCycle(double J, double lw) {
+    /*private static long getJulianCycle(double J, double lw) {
         return Math.round(J - J2000 - J0 - lw / (2 * Math.PI));
-    }
+    }*/
 
     private static double getSolarMeanAnomaly(double Js) {
         return M0 + M1 * (Js - J2000);
@@ -76,7 +77,7 @@ public class SunPosition {
         return Math.asin(Math.sin(Ls) * Math.sin(e));
     }
 
-	// calculations for sun times
+	/*// calculations for sun times
     private static double getApproxTransit(double Ht, double lw, double n) {
         return J2000 + J0 + (Ht + lw) / (2 * Math.PI) + n;
     }
@@ -88,8 +89,8 @@ public class SunPosition {
     private static double getHourAngle(double h, double phi, double d) {
         return Math.acos((Math.sin(h) - Math.sin(phi) * Math.sin(d))
                 / (Math.cos(phi) * Math.cos(d)));
-    }
-
+    }*/
+    
     // calculations for sun position
     private static double getRightAscension(double Ls) {
         return Math.atan2(Math.sin(Ls) * Math.cos(e), Math.cos(Ls));
@@ -98,7 +99,8 @@ public class SunPosition {
     private static double getSiderealTime(double J, double lw) {
         return th0 + th1 * (J - J2000) - lw;
     }
-
+    
+    //azimuth calculé à partir du Sud ?
     private static double getAzimuth(double H, double phi, double d) {
         return Math.atan2(Math.sin(H),
                 Math.cos(H) * Math.sin(phi) - Math.tan(d) * Math.cos(phi));
@@ -127,7 +129,7 @@ public class SunPosition {
         ArrayList<Double> ret = new ArrayList<>();
         ret.add(getAltitude(H, phi, d));
         ret.add(getAzimuth(H, phi, d));
-
+        
         return ret;
     }
 

@@ -21,12 +21,12 @@ import java.util.ArrayList;
 public class Cube {
     
     private static final GeometryFactory GF = new GeometryFactory();
-    private Coordinate c;
-    private int l;
+    //private Coordinate c;
+    //private int l;
 
-    public Cube(Coordinate c, int l) {
-        this.c = c;
-        this.l = l;
+    public Cube() {
+        /*this.c = c;
+        this.l = l;*/
     }
     
     /**
@@ -35,20 +35,20 @@ public class Cube {
      * @param l
      * @return 
      */
-public ArrayList<Coordinate> construireBase (Coordinate c, int l){
+public Polygon construireBase (Coordinate c, int l){
     ArrayList<Coordinate> pointsSol = new ArrayList<>();
         pointsSol.add(c);
         pointsSol.add(new Coordinate(c.x+l,c.y,c.z));
         pointsSol.add(new Coordinate(c.x+l,c.y+l,c.z));
-        pointsSol.add(new Coordinate(c.x,c.y+1,c.z));
-        //pointsSol.add(c);
+        pointsSol.add(new Coordinate(c.x,c.y+l,c.z));
+        pointsSol.add(c);
         
        
         
-        //Polygon sol = GF.createPolygon(new LinearRing(new CoordinateArraySequence(pointsSol
-        //.toArray(new Coordinate[pointsSol.size()])), GF), null);
+        Polygon sol = GF.createPolygon(new LinearRing(new CoordinateArraySequence(pointsSol
+        .toArray(new Coordinate[pointsSol.size()])), GF), null);
         
-        return pointsSol;
+        return sol;
 }
  
     /**
