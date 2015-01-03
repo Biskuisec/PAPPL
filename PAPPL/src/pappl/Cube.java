@@ -31,20 +31,22 @@ public class Cube {
     
     /**
      * Construction de la base d'un cube (carré) à partir de son origine et de la longueur de l'arête
-     * @param c
-     * @param l
-     * @return 
+     * @param c : coordonées d'un des sommets de la base
+     * @param l : longueur des segments
+     * @return le polygone carré créé
      */
-public Polygon construireBase (Coordinate c, int l){
-    ArrayList<Coordinate> pointsSol = new ArrayList<>();
-        pointsSol.add(c);
-        pointsSol.add(new Coordinate(c.x+l,c.y,c.z));
+public Polygon construireBase (Coordinate c, int l){ 
+    ArrayList<Coordinate> pointsSol = new ArrayList<>(); // on stocke les coordonnées de la base du cube dans un tableau
+        pointsSol.add(c);// on ajoute en premier le sommet de référence donné en paramètre
+        // on ajoute ensuite au fur et à mesure les les trois autres sommets, en tournant dans le sens des aiguilles d'une montre
+        pointsSol.add(new Coordinate(c.x+l,c.y,c.z)); 
         pointsSol.add(new Coordinate(c.x+l,c.y+l,c.z));
         pointsSol.add(new Coordinate(c.x,c.y+l,c.z));
+        // pour fermer le polygône, on ajoute le sommet initial à nouveau
         pointsSol.add(c);
         
        
-        
+        // on créé grâce à cette liste de coordonnées le polygône
         Polygon sol = GF.createPolygon(new LinearRing(new CoordinateArraySequence(pointsSol
         .toArray(new Coordinate[pointsSol.size()])), GF), null);
         
@@ -54,6 +56,7 @@ public Polygon construireBase (Coordinate c, int l){
     /**
      * Construction d'un cube à partir de son origine et longueur de son arête
      * Gestion du 3D par JTS ?
+     * Nous avon abandonné cette méthode, nous ayant rendu compte que la 3D n'était pas nécessaire pour notre fonction
      * @param c
      * @param l
      * @return 
