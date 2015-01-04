@@ -9,6 +9,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 import java.util.ArrayList;
 import junit.framework.TestCase;
 import java.lang.Math.*;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 
 /**
  *
@@ -18,6 +20,14 @@ public class ShadowTest extends TestCase {
     
     public ShadowTest(String testName) {
         super(testName);
+    }
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
     }
 
     /**
@@ -41,15 +51,14 @@ public class ShadowTest extends TestCase {
      */
     public void testProjection() {
         System.out.println("projection");
-        Coordinate c = null;
-        double h = 0.0;
-        Coordinate direction = null;
+        Coordinate c =new Coordinate(0,0);
+        double h =1;
+        Coordinate direction = new Coordinate(1,1);
         Shadow instance = null;
-        Coordinate expResult = null;
+        Coordinate expResult = new Coordinate(1,1);
         Coordinate result = instance.projection(c, h, direction);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
     }
 
     /**
@@ -57,7 +66,8 @@ public class ShadowTest extends TestCase {
      */
     public void testCreateShadow() {
         System.out.println("createShadow");
-        ArrayList<Coordinate> base = null;
+        ArrayList<Coordinate> base = new ArrayList();
+        base={add((0,0));,add((0,1));,add((1,1));,add((1,0));};
         double height = 0.0;
         Coordinate direction = null;
         Shadow instance = null;
