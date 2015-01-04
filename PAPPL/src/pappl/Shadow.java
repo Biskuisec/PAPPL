@@ -4,9 +4,9 @@
  */
 package pappl;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Polygon;
 import java.util.ArrayList;
+import com.vividsolutions.jts.geom;
+
 
 /**
  *
@@ -30,7 +30,12 @@ public class Shadow {
         this.altitude = altitude;
         this.azimuth = azimuth;
     }
-
+/**
+ * Constructeur
+ * @param sun1 : position du soleil
+ * @param lat : latitude
+ * @param lon : longitude
+ */
     public Shadow(SunPosition sun1, double lat, double lon) {
         this.sun = sun1;
         this.altitude = SunPosition.getPosition(sun1.getDate(),lat,lon).get(0);
@@ -44,7 +49,7 @@ public class Shadow {
      * On calcule la direction du soleil
      * @param altitude
      * @param azimuth
-     * @return
+     * @return les coordonnées du soleil
      */
     public Coordinate calculateDirection(double altitude, double azimuth) {
         Coordinate direction = new Coordinate();
@@ -54,14 +59,26 @@ public class Shadow {
 
         return direction;
     }
-
+/**
+ * Calcul des coordonnées de l'ombre d'un point 2D avec une hauteur en fonction de la position du soleil
+ * @param c : coordonnées du point dont il faut calculer l'ombre
+ * @param h : hauteur de ce point
+ * @param direction : direction du soleil
+ * @return : les coordonnées calculées du point de l'ombre
+ */
     public Coordinate projection(Coordinate c, double h, Coordinate direction) {
         Coordinate project = new Coordinate();
+        // calcul des coordonnées
         project.x = c.x + direction.x * h;
         project.y = c.y + direction.y * h;
         return project;
     }
-
+/**
+ * Calcul de l'ombre pour une base toute entière
+ * @param base dont il faut calculer l'ombre
+ * @param height : hauteur de la base
+ * @param direction du soleil
+ */
     public void createShadow(ArrayList<Coordinate> base, double height, Coordinate direction) {
         Coordinate a = new Coordinate(0, 0);
         Coordinate b = new Coordinate(0, 0);
