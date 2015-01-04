@@ -5,7 +5,7 @@
 package pappl;
 
 import java.util.ArrayList;
-import com.vividsolutions.jts.geom;
+import com.vividsolutions.jts.geom.Coordinate;
 
 
 /**
