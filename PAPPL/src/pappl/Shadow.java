@@ -6,6 +6,11 @@ package pappl;
 
 import java.util.ArrayList;
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 
 
 /**
@@ -79,30 +84,36 @@ public class Shadow {
  * @param height : hauteur de la base
  * @param direction du soleil
  */
-    public void createShadow(ArrayList<Coordinate> base, double height, Coordinate direction) {
+    public Polygon createShadow(Polygon polygon, double height, Coordinate direction) {
+        
+        GeometryFactory factory = polygon.getFactory();
+        final LineString shell = polygon.getExteriorRing();
+        ArrayList<Coordinate> shadowPoints = new ArrayList<>();
+        
         Coordinate a = new Coordinate(0, 0);
         Coordinate b = new Coordinate(0, 0);
         Coordinate _a = new Coordinate(0, 0);
         Coordinate _b = new Coordinate(0, 0);
 
-        for (int i = 0; i < base.size() - 1; i++) {
-            a.x = base.get(i).x - ORIGIN_X;
-            a.y = base.get(i).y - ORIGIN_Y;
-            b.x = base.get(i + 1).x - ORIGIN_X;
-            b.y = base.get(i + 1).y - ORIGIN_Y;
+        for (int i = 0; i < shell.getNumPoints() - 1; i++) {
+            a.x = shell.getCoordinateN(i).x - ORIGIN_X;
+            a.y = shell.getCoordinateN(i).y - ORIGIN_Y;
+            b.x = shell.getCoordinateN(i + 1).x - ORIGIN_X;
+            b.y = shell.getCoordinateN(i + 1).y - ORIGIN_Y;
 
             _a.x = projection(a, height, direction).x;
             _a.y = projection(a, height, direction).y;
             _b.x = projection(b, height, direction).x;
             _b.y = projection(b, height, direction).y;
 
-            System.out.println(_a);
-            System.out.println(_b);
-
-
-
+            shadowPoints.add(_a);
+            shadowPoints.add(_b);
 
 
         }
+        CoordinateArraySequence shadowOutline = new CoordinateArraySequence(shadowPoints.toArray(new Coordinate[shadowPoints.size()]));
+        LineString shadow = new LineString(shadowOutline,factory);
+        Polygon shadowBuilding = factory.createPolygon(factory.createLinearRing(shadow.getCoordinateSequence()));
+        return shadowBuilding;
     }
 }
