@@ -12,6 +12,8 @@ import java.util.Date;
 /**
  * Code from https://github.com/mncaudill/SunCalc-Java/blob/master/src/main/java/com/nolancaudill/suncalc/SunCalc.java
  * Based on http://aa.quae.nl/en/reken/zonpositie.html
+ * 
+ * Azimuth du soleil entre -Pi et Pi, 0 étant plein sud
  * @author Bertille
  */
 public class SunPosition {
