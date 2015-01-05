@@ -32,11 +32,11 @@ public class PAPPL {
          faces.add(sol);
          ArrayList<Coordinate> plafond = new ArrayList<>();
          faces.add(plafond);*/
-        /*Coordinate origine = new Coordinate(0, 0, 0);
-        Cube cube = new Cube(origine, 1);
+        Coordinate origine = new Coordinate(0, 0, 0);
+        Cube cube = new Cube();
 
         //cube.construireCube(origine, 1);
-        ArrayList<Coordinate> carre = cube.construireBase(origine, 1);
+        Polygon carre = cube.construireBase(origine, 1);
 
 
 /**
@@ -58,7 +58,7 @@ public class PAPPL {
  */
         //shadow.createShadow(carre, height,direction); 
 
-        Date now = new Date(new java.util.Date().getTime());
+        /*Date now = new Date(new java.util.Date().getTime());
         System.out.println(new java.util.Date().getTime());
         //SunPosition soleil = new SunPosition(now);
         double lat = 47.2484747;
@@ -66,7 +66,10 @@ public class PAPPL {
         
         
         System.out.println(SunPosition.getPosition(now, lat, lng).get(0));
-        System.out.println(SunPosition.getPosition(now, lat, lng).get(1));
+        System.out.println(SunPosition.getPosition(now, lat, lng).get(1));*/
+        Shadow shadow = new Shadow(0,0);
+        Coordinate direction = new Coordinate (0.5,0);
+        shadow.createShadow(carre, 1, direction);
 
 
     }

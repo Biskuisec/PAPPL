@@ -9,6 +9,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 
@@ -106,14 +107,21 @@ public class Shadow {
             _b.x = projection(b, height, direction).x;
             _b.y = projection(b, height, direction).y;
 
+            //TODO _a et _b sont modifiés en plus d'être ajoutés, on n'obtient pas la liste des coordonnées voulues
+System.out.println(shadowPoints);
             shadowPoints.add(_a);
             shadowPoints.add(_b);
-
+            System.out.println(a);
+            System.out.println(b);
+            System.out.println(_a);
+            System.out.println(_b);
+System.out.println(shadowPoints);
 
         }
-        CoordinateArraySequence shadowOutline = new CoordinateArraySequence(shadowPoints.toArray(new Coordinate[shadowPoints.size()]));
-        LineString shadow = new LineString(shadowOutline,factory);
-        Polygon shadowBuilding = factory.createPolygon(factory.createLinearRing(shadow.getCoordinateSequence()));
+        
+        //CoordinateArraySequence shadowOutline = new CoordinateArraySequence(shadowPoints.toArray(new Coordinate[shadowPoints.size()]));
+        //LineString shadow = new LineString(shadowOutline,factory);
+        Polygon shadowBuilding = factory.createPolygon(new LinearRing(new CoordinateArraySequence(shadowPoints.toArray(new Coordinate[shadowPoints.size()])),factory), null);
         return shadowBuilding;
     }
 }

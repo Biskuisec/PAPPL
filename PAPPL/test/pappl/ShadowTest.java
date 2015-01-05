@@ -6,11 +6,12 @@
 package pappl;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import java.util.ArrayList;
 import junit.framework.TestCase;
 import java.lang.Math.*;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 
 /**
  *
@@ -20,14 +21,6 @@ public class ShadowTest extends TestCase {
     
     public ShadowTest(String testName) {
         super(testName);
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
     }
 
     /**
@@ -66,14 +59,19 @@ public class ShadowTest extends TestCase {
      */
     public void testCreateShadow() {
         System.out.println("createShadow");
-        ArrayList<Coordinate> base = new ArrayList();
-        base={add((0,0));,add((0,1));,add((1,1));,add((1,0));};
-        double height = 0.0;
-        Coordinate direction = null;
-        Shadow instance = null;
-        instance.createShadow(base, height, direction);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        Cube cube=new Cube();
+        Shadow shadow = new Shadow(0.0738274274,0.84002696898487);
+        Polygon base;
+        Coordinate origine = new Coordinate (0,0);
+        base = cube.construireBase(origine,1);
+        double height = 1;
+        Coordinate direction = new Coordinate(0.5,0);
+        Polygon result;
+        Coordinate origineExpResult= new Coordinate(-1,0);
+        result = shadow.createShadow(base, height, direction); //pb à résoudre dans la création des coordonnées de createShadow
+        Polygon expResult;
+        expResult = cube.construireBase(origineExpResult,1);
+        assertEquals(expResult,result);
     }
     
 }
