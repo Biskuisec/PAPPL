@@ -47,7 +47,7 @@ public class ShadowTest extends TestCase {
         Coordinate c =new Coordinate(0,0);
         double h =1;
         Coordinate direction = new Coordinate(1,1);
-        Shadow instance = null;
+        Shadow instance = new Shadow(0,0);
         Coordinate expResult = new Coordinate(1,1);
         Coordinate result = instance.projection(c, h, direction);
         assertEquals(expResult, result);
