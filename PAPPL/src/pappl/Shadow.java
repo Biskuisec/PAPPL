@@ -93,8 +93,8 @@ public class Shadow {
         
         Coordinate a = new Coordinate(0, 0);
         Coordinate b = new Coordinate(0, 0);
-        Coordinate _a = new Coordinate(0, 0);
-        Coordinate _b = new Coordinate(0, 0);
+        //Coordinate _a = new Coordinate(0, 0);
+        //Coordinate _b = new Coordinate(0, 0);
 
         for (int i = 0; i < shell.getNumPoints() - 1; i++) {
             a.x = shell.getCoordinateN(i).x - ORIGIN_X;
@@ -102,20 +102,16 @@ public class Shadow {
             b.x = shell.getCoordinateN(i + 1).x - ORIGIN_X;
             b.y = shell.getCoordinateN(i + 1).y - ORIGIN_Y;
 
-            _a.x = projection(a, height, direction).x;
+            /*_a.x = projection(a, height, direction).x;
             _a.y = projection(a, height, direction).y;
             _b.x = projection(b, height, direction).x;
-            _b.y = projection(b, height, direction).y;
+            _b.y = projection(b, height, direction).y;*/
 
-            //TODO _a et _b sont modifiés en plus d'être ajoutés, on n'obtient pas la liste des coordonnées voulues
-System.out.println(shadowPoints);
-            shadowPoints.add(_a);
-            shadowPoints.add(_b);
-            System.out.println(a);
-            System.out.println(b);
-            System.out.println(_a);
-            System.out.println(_b);
-System.out.println(shadowPoints);
+
+
+            shadowPoints.add(new Coordinate(projection(a, height, direction).x,projection(a, height, direction).y));
+            shadowPoints.add(new Coordinate(projection(b, height, direction).x,projection(b, height, direction).y));
+
 
         }
         
