@@ -91,14 +91,14 @@ public class Shadow {
      * @param direction du soleil
      */
     public Polygon createShadow(Polygon polygon, double height, Coordinate direction) {
-
+        // Création d'une GeometryFactory nécessaire pour la création d'un polygone ainsi que d'une LisneString et d'une liste de coordonnées.
         GeometryFactory factory = polygon.getFactory();
         final LineString shell = polygon.getExteriorRing();
         ArrayList<Coordinate> shadowPoints = new ArrayList<>();
-
+        // initialisation des coordonnées de l'ombre
         Coordinate a = new Coordinate(0, 0);
         Coordinate b = new Coordinate(0, 0);
-
+        // On calcule l'ombre à partir des arêtes du polygône, a et b sont les extrémités des arêtes
         for (int i = 0; i < shell.getNumPoints() - 1; i++) {
             a.x = shell.getCoordinateN(i).x - ORIGIN_X;
             a.y = shell.getCoordinateN(i).y - ORIGIN_Y;
@@ -106,15 +106,16 @@ public class Shadow {
             b.y = shell.getCoordinateN(i + 1).y - ORIGIN_Y;
 
 
-
+            // on ajoute à la liste de coordonnées du futur polygône les coordonnées des arêtes projetées
             shadowPoints.add(new Coordinate(projection(a, height, direction).x, projection(a, height, direction).y));
+            // lorsque l'on arrive au dernier sommet(qui est en fait le premier), on le recopie.
             if (i == shell.getNumPoints() - 2) {
                 shadowPoints.add(new Coordinate(projection(b, height, direction).x, projection(b, height, direction).y));
             }
 
 
         }
-
+        // Le polygône quireprésente l'ombre du building est créé.  
         Polygon shadowBuilding = factory.createPolygon(new LinearRing(new CoordinateArraySequence(shadowPoints.toArray(new Coordinate[shadowPoints.size()])), factory), null);
         return shadowBuilding;
     }
