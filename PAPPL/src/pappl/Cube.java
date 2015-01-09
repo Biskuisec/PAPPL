@@ -30,10 +30,10 @@ public class Cube {
     }
     
     /**
-     * Construction de la base d'un cube (carré) à partir de son origine et de la longueur de l'arête
-     * @param c : coordonées d'un des sommets de la base
-     * @param l : longueur des segments
-     * @return le polygone carré créé
+     * Construction of the base of a cube ( square ) from the origin and the length of the edge
+     * @param c : coordinate of one of the top of the square
+     * @param l : segment lenghts
+     * @return the polygon square created
      */
 public Polygon construireBase (Coordinate c, int l){ 
     ArrayList<Coordinate> pointsSol = new ArrayList<>(); // on stocke les coordonnées de la base du cube dans un tableau
