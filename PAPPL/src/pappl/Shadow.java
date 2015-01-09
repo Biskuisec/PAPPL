@@ -100,7 +100,7 @@ public class Shadow {
 
         Coordinate a = new Coordinate(0, 0);
         Coordinate b = new Coordinate(0, 0);
-
+        // On calcule l'ombre à partir des arêtes du polygône, a et b sont les extrémités des arêtes
         for (int i = 0; i < shell.getNumPoints() - 1; i++) {
             ArrayList<Coordinate> shadowPoints = new ArrayList<>();
             a.x = shell.getCoordinateN(i).x - ORIGIN_X;
@@ -119,9 +119,10 @@ public class Shadow {
             shadowParts.add(factory.createPolygon(new LinearRing(new CoordinateArraySequence(shadowPoints.toArray(new Coordinate[shadowPoints.size()])), factory), null));
         
 
-
         }
 
+
        return polygon.getFactory().createMultiPolygon(shadowParts.toArray(new Polygon[shadowParts.size()]));
+
     }
 }
