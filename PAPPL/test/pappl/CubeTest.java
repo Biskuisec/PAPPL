@@ -30,6 +30,7 @@ public class CubeTest extends TestCase {
         Cube instance = new Cube();
         Coordinate c1 = new Coordinate(0,0);
         int l1 = 1;
+        // On construit un polygône de côté l1 et d'origine c1
         Polygon result1 = instance.construireBase(c1, l1);
         assertEquals(1.0, result1.getArea());
         //test we get the right surface

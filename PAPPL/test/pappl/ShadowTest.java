@@ -6,7 +6,10 @@
 package pappl;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import java.util.ArrayList;
@@ -59,6 +62,7 @@ public class ShadowTest extends TestCase {
      */
     public void testCreateShadow() {
         System.out.println("createShadow");
+        GeometryFactory GF = new GeometryFactory();
         Cube cube=new Cube();
         Shadow shadow = new Shadow(0.0738274274,0.84002696898487);
         Polygon base;
@@ -67,17 +71,29 @@ public class ShadowTest extends TestCase {
         double height = 1;
         double height2 = 2;
         Coordinate direction = new Coordinate(0,-1);
-        Polygon result;
-        Polygon result2;
+        MultiPolygon result;
+        MultiPolygon result2;
         Coordinate origineExpResult= new Coordinate(0,-1);
         result = shadow.createShadow(base, height, direction); 
         result2 = shadow.createShadow(base, height2, direction); 
         Polygon expResult;
-        Polygon expResult2;
+        
+        ArrayList<Coordinate> polygonPoints = new ArrayList<>();
+        Coordinate p1 = new Coordinate(0,-2);
+        Coordinate p2 = new Coordinate(1,-2);
+        Coordinate p3 = new Coordinate(1,0);
+        Coordinate p4 = new Coordinate(0,0);
+        polygonPoints.add(p1);
+        polygonPoints.add(p2);
+        polygonPoints.add(p3);
+        polygonPoints.add(p4);
+        polygonPoints.add(p1);
+        Polygon expResult2 = GF.createPolygon(new LinearRing(new CoordinateArraySequence(polygonPoints.toArray(new Coordinate[polygonPoints.size()])), GF), null);
+    
         expResult = cube.construireBase(origineExpResult,1);
-        expResult2 = cube.construireBase(origineExpResult,2);
-        assertEquals(expResult,result);
-        //assertEquals(expResult2,result2);
+
+        //assertEquals(expResult,result);
+        assertEquals(expResult2,result2);
     }
     
 }
