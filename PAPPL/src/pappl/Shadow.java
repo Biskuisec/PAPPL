@@ -26,7 +26,7 @@ public class Shadow {
     private SunPosition sun;
 
     /**
-     * Constructeur de test
+     * test constructor
      *
      * @param altitude
      * @param azimuth
@@ -37,9 +37,9 @@ public class Shadow {
     }
 
     /**
-     * Constructeur
+     * Constructor
      *
-     * @param sun1 : position du soleil
+     * @param sun1 : sun position
      * @param lat : latitude
      * @param lon : longitude
      */
@@ -51,11 +51,11 @@ public class Shadow {
     }
 
     /**
-     * On calcule la direction du soleil
+     * Calculation of the sun direction
      *
      * @param altitude
      * @param azimuth
-     * @return les coordonnées du soleil
+     * @return sun coordinates
      */
     public Coordinate calculateDirection(double altitude, double azimuth) {
         Coordinate direction = new Coordinate();
@@ -67,38 +67,38 @@ public class Shadow {
     }
 
     /**
-     * Calcul des coordonnées de l'ombre d'un point 2D avec une hauteur en
-     * fonction de la position du soleil
-     *
-     * @param c : coordonnées du point dont il faut calculer l'ombre
-     * @param h : hauteur de ce point
-     * @param direction : direction du soleil
-     * @return : les coordonnées calculées du point de l'ombre
+     * Calculating the coordinates of the shadow of a 2D point with a 
+     * height according to the position of the sun
+     * 
+     * @param c : coordiantes of the point whose shade is calculated
+     * @param h : height of the point
+     * @param direction : sun direction
+     * @return : shadow coordinate
      */
     public Coordinate projection(Coordinate c, double h, Coordinate direction) {
         Coordinate project = new Coordinate();
-        // calcul des coordonnées
+        // calculation of the coordinates
         project.x = c.x + direction.x * h;
         project.y = c.y + direction.y * h;
         return project;
     }
 
     /**
-     * Calcul de l'ombre pour une base toute entière
+     * calculation of the shadow for the whole base
      *
-     * @param base dont il faut calculer l'ombre
-     * @param height : hauteur de la base
-     * @param direction du soleil
+     * @param base whose shadow is calculated
+     * @param height of the base
+     * @param direction of the sun
      */
     public Polygon createShadow(Polygon polygon, double height, Coordinate direction) {
-        // Création d'une GeometryFactory nécessaire pour la création d'un polygone ainsi que d'une LisneString et d'une liste de coordonnées.
+        //Creating a GeometryFactory, a LisneString and a list of coordinates which is necessary for the creation of a polygon.
         GeometryFactory factory = polygon.getFactory();
         final LineString shell = polygon.getExteriorRing();
         ArrayList<Coordinate> shadowPoints = new ArrayList<>();
-        // initialisation des coordonnées de l'ombre
+        // initializing the coordinates of the shadow
         Coordinate a = new Coordinate(0, 0);
         Coordinate b = new Coordinate(0, 0);
-        // On calcule l'ombre à partir des arêtes du polygône, a et b sont les extrémités des arêtes
+        // Shade is calculated from the edges of the polygon, a and b are the ends of the edges
         for (int i = 0; i < shell.getNumPoints() - 1; i++) {
             a.x = shell.getCoordinateN(i).x - ORIGIN_X;
             a.y = shell.getCoordinateN(i).y - ORIGIN_Y;
@@ -106,16 +106,16 @@ public class Shadow {
             b.y = shell.getCoordinateN(i + 1).y - ORIGIN_Y;
 
 
-            // on ajoute à la liste de coordonnées du futur polygône les coordonnées des arêtes projetées
+            // Addition to the list of coordinates of the future shadow polygon 
             shadowPoints.add(new Coordinate(projection(a, height, direction).x, projection(a, height, direction).y));
-            // lorsque l'on arrive au dernier sommet(qui est en fait le premier), on le recopie.
+            // when you arrive at the last summit (which is actually the first ) , it is copied .
             if (i == shell.getNumPoints() - 2) {
                 shadowPoints.add(new Coordinate(projection(b, height, direction).x, projection(b, height, direction).y));
             }
 
 
         }
-        // Le polygône quireprésente l'ombre du building est créé.  
+        // The polygon representing the shadow of the building is created.
         Polygon shadowBuilding = factory.createPolygon(new LinearRing(new CoordinateArraySequence(shadowPoints.toArray(new Coordinate[shadowPoints.size()])), factory), null);
         return shadowBuilding;
     }
