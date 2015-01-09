@@ -36,17 +36,17 @@ public class Cube {
      * @return the polygon square created
      */
 public Polygon construireBase (Coordinate c, int l){ 
-    ArrayList<Coordinate> pointsSol = new ArrayList<>(); // on stocke les coordonnées de la base du cube dans un tableau
-        pointsSol.add(c);// on ajoute en premier le sommet de référence donné en paramètre
-        // on ajoute ensuite au fur et à mesure les les trois autres sommets, en tournant dans le sens des aiguilles d'une montre
+    ArrayList<Coordinate> pointsSol = new ArrayList<>(); // the coordinates of the base of the cube is stored in a template
+        pointsSol.add(c);// adding first the given top
+        // we add then the trhee other tops, turning in the direction of clockwise
         pointsSol.add(new Coordinate(c.x+l,c.y,c.z)); 
         pointsSol.add(new Coordinate(c.x+l,c.y+l,c.z));
         pointsSol.add(new Coordinate(c.x,c.y+l,c.z));
-        // pour fermer le polygône, on ajoute le sommet initial à nouveau
+        // to close the polygon , the initial top is added again
         pointsSol.add(c);
         
        
-        // on créé grâce à cette liste de coordonnées le polygône
+        // creation of the polygon thanks to this list of coordinates
         Polygon sol = GF.createPolygon(new LinearRing(new CoordinateArraySequence(pointsSol
         .toArray(new Coordinate[pointsSol.size()])), GF), null);
         
@@ -54,9 +54,9 @@ public Polygon construireBase (Coordinate c, int l){
 }
  
     /**
-     * Construction d'un cube à partir de son origine et longueur de son arête
+     * Construction of a cube from its origin and length of its edge
      * Gestion du 3D par JTS ?
-     * Nous avon abandonné cette méthode, nous ayant rendu compte que la 3D n'était pas nécessaire pour notre fonction
+     * Nous avons abandonné cette méthode, nous étant rendu compte que la 3D n'était pas nécessaire pour notre fonction
      * @param c
      * @param l
      * @return 
