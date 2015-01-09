@@ -65,13 +65,19 @@ public class ShadowTest extends TestCase {
         Coordinate origine = new Coordinate (0,0);
         base = cube.construireBase(origine,1);
         double height = 1;
-        Coordinate direction = new Coordinate(0.5,0);
+        double height2 = 2;
+        Coordinate direction = new Coordinate(0,-1);
         Polygon result;
-        Coordinate origineExpResult= new Coordinate(-1,0);
-        result = shadow.createShadow(base, height, direction); //pb à résoudre dans la création des coordonnées de createShadow
+        Polygon result2;
+        Coordinate origineExpResult= new Coordinate(0,-1);
+        result = shadow.createShadow(base, height, direction); 
+        result2 = shadow.createShadow(base, height2, direction); 
         Polygon expResult;
+        Polygon expResult2;
         expResult = cube.construireBase(origineExpResult,1);
+        expResult2 = cube.construireBase(origineExpResult,2);
         assertEquals(expResult,result);
+        //assertEquals(expResult2,result2);
     }
     
 }
