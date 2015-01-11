@@ -7,12 +7,16 @@ package pappl;
 import java.util.ArrayList;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
+import com.vividsolutions.jts.operation.polygonize.Polygonizer;
+import java.util.Collection;
 
 /**
  *
@@ -87,20 +91,24 @@ public class Shadow {
     /**
      * calculation of the shadow for the whole base
      *
-     * @param base whose shadow is calculated
+     * @param polygon
      * @param height of the base
      * @param direction of the sun
+     * @return 
      */
 
         //Creating a GeometryFactory, a LisneString and a list of coordinates which is necessary for the creation of a polygon.
 
-    public MultiPolygon createShadow(Polygon polygon, double height, Coordinate direction) {
+    public Polygon createShadow(Polygon polygon, double height, Coordinate direction) {
 
-        GeometryFactory factory = polygon.getFactory();
+        GeometryFactory factory = polygon.getFactory(); 
         final LineString shell = polygon.getExteriorRing();
         // initializing the coordinates of the shadow
+        Polygon[] shadows = new Polygon[shell.getNumPoints() - 1];
+        shadows[0] = polygon;
+        
 
-        ArrayList<Polygon> shadowParts = new ArrayList<Polygon>();
+        //Polygon shadow = polygon;
         Coordinate a = new Coordinate(0, 0);
         Coordinate b = new Coordinate(0, 0);
         // Shade is calculated from the edges of the polygon, a and b are the ends of the edges
@@ -121,14 +129,19 @@ public class Shadow {
             shadowPoints.add(new Coordinate(shell.getCoordinateN(i+1).x - ORIGIN_X,shell.getCoordinateN(i+1).y - ORIGIN_Y));
             shadowPoints.add(new Coordinate(shell.getCoordinateN(i).x - ORIGIN_X,shell.getCoordinateN(i).y - ORIGIN_Y));
             
+            System.out.println(shadowPoints);
             
-            shadowParts.add(factory.createPolygon(new LinearRing(new CoordinateArraySequence(shadowPoints.toArray(new Coordinate[shadowPoints.size()])), factory), null));
-        
+            Polygon shadowPart = factory.createPolygon(new LinearRing(new CoordinateArraySequence(shadowPoints.toArray(new Coordinate[shadowPoints.size()])), factory), null);
+
+            shadows[i]=shadowPart;
+
 
         }
-
-        // The polygon representing the shadow of the building is created.
-
-       return polygon.getFactory().createMultiPolygon(shadowParts.toArray(new Polygon[shadowParts.size()]));
+        
+        GeometryCollection geometryCollection = new GeometryCollection(shadows,factory);
+           
+        //union of all the polygons in the geometryCollection
+        return (Polygon) geometryCollection.buffer(0);
+       
     }
 }

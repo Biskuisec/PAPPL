@@ -71,10 +71,10 @@ public class ShadowTest extends TestCase {
         double height = 1;
         double height2 = 2;
         Coordinate direction = new Coordinate(0,-1);
-        MultiPolygon result;
-        MultiPolygon result2;
+        Polygon result;
+        Polygon result2;
         Coordinate origineExpResult= new Coordinate(0,-1);
-        result = shadow.createShadow(base, height, direction); 
+        //result = shadow.createShadow(base, height, direction); 
         result2 = shadow.createShadow(base, height2, direction); 
         Polygon expResult;
         
@@ -90,7 +90,7 @@ public class ShadowTest extends TestCase {
         polygonPoints.add(p1);
         Polygon expResult2 = GF.createPolygon(new LinearRing(new CoordinateArraySequence(polygonPoints.toArray(new Coordinate[polygonPoints.size()])), GF), null);
     
-        expResult = cube.construireBase(origineExpResult,1);
+        //expResult = cube.construireBase(origineExpResult,1);
 
         //assertEquals(expResult,result);
         assertEquals(expResult2,result2);

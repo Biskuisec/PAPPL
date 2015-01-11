@@ -68,8 +68,8 @@ public class PAPPL {
         System.out.println(SunPosition.getPosition(now, lat, lng).get(0));
         System.out.println(SunPosition.getPosition(now, lat, lng).get(1));*/
         Shadow shadow = new Shadow(0,0);
-        Coordinate direction = new Coordinate (0.5,0);
-        shadow.createShadow(carre, 1, direction);
+        Coordinate direction = new Coordinate (0,-1);
+        shadow.createShadow(carre, 2, direction);
 
 
     }
