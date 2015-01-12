@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Shadow.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;PAPPL&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.html" class="el_package">pappl</a> &gt; <span class="el_source">Shadow.java</span></div><h1>Shadow.java</h1><pre class="source lang-java linenums">/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package pappl;
+
+import java.util.ArrayList;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
+
+/**
+ *
+ * @author avinesse
+ */
+public class Shadow {
+
+<span class="pc" id="L23">    final int ORIGIN_X = 0;</span>
+<span class="pc" id="L24">    final int ORIGIN_Y = 0;</span>
+    private double altitude;
+    private double azimuth;
+    private SunPosition sun;
+
+    /**
+     * test constructor
+     *
+     * @param altitude
+     * @param azimuth
+     */
+<span class="fc" id="L35">    public Shadow(double altitude, double azimuth) {</span>
+<span class="fc" id="L36">        this.altitude = altitude;</span>
+<span class="fc" id="L37">        this.azimuth = azimuth;</span>
+<span class="fc" id="L38">    }</span>
+
+    /**
+     * Constructor
+     *
+     * @param sun1 : sun position
+     * @param lat : latitude
+     * @param lon : longitude
+     */
+<span class="nc" id="L47">    public Shadow(SunPosition sun1, double lat, double lon) {</span>
+<span class="nc" id="L48">        this.sun = sun1;</span>
+<span class="nc" id="L49">        this.altitude = SunPosition.getPosition(sun1.getDate(), lat, lon).get(0);</span>
+<span class="nc" id="L50">        this.azimuth = SunPosition.getPosition(sun1.getDate(), lat, lon).get(1);</span>
+
+<span class="nc" id="L52">    }</span>
+
+    /**
+     * Calculation of the sun direction
+     *
+     * @param altitude
+     * @param azimuth
+     * @return sun coordinates
+     */
+    public Coordinate calculateDirection(double altitude, double azimuth) {
+<span class="nc" id="L62">        Coordinate direction = new Coordinate();</span>
+<span class="nc" id="L63">        double length = 1.0 / (Math.tan(altitude));</span>
+<span class="nc" id="L64">        direction.x = Math.cos(azimuth) * length;</span>
+<span class="nc" id="L65">        direction.y = Math.sin(azimuth) * length;</span>
+
+<span class="nc" id="L67">        return direction;</span>
+    }
+
+    /**
+     * Calculating the coordinates of the shadow of a 2D point with a 
+     * height according to the position of the sun
+     * 
+     * @param c : coordiantes of the point whose shade is calculated
+     * @param h : height of the point
+     * @param direction : sun direction
+     * @return : shadow coordinate
+     */
+    public Coordinate projection(Coordinate c, double h, Coordinate direction) {
+<span class="fc" id="L80">        Coordinate project = new Coordinate();</span>
+        // calculation of the coordinates
+<span class="fc" id="L82">        project.x = c.x + direction.x * h;</span>
+<span class="fc" id="L83">        project.y = c.y + direction.y * h;</span>
+<span class="fc" id="L84">        return project;</span>
+    }
+
+    /**
+     * calculation of the shadow for the whole base
+     *
+     * @param base whose shadow is calculated
+     * @param height of the base
+     * @param direction of the sun
+     */
+
+        //Creating a GeometryFactory, a LisneString and a list of coordinates which is necessary for the creation of a polygon.
+
+    public MultiPolygon createShadow(Polygon polygon, double height, Coordinate direction) {
+
+<span class="fc" id="L99">        GeometryFactory factory = polygon.getFactory();</span>
+<span class="fc" id="L100">        final LineString shell = polygon.getExteriorRing();</span>
+        // initializing the coordinates of the shadow
+
+<span class="fc" id="L103">        ArrayList&lt;Polygon&gt; shadowParts = new ArrayList&lt;Polygon&gt;();</span>
+<span class="fc" id="L104">        Coordinate a = new Coordinate(0, 0);</span>
+<span class="fc" id="L105">        Coordinate b = new Coordinate(0, 0);</span>
+        // Shade is calculated from the edges of the polygon, a and b are the ends of the edges
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        for (int i = 0; i &lt; shell.getNumPoints() - 1; i++) {</span>
+<span class="fc" id="L108">            ArrayList&lt;Coordinate&gt; shadowPoints = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L109">            a.x = shell.getCoordinateN(i).x - ORIGIN_X;</span>
+<span class="fc" id="L110">            a.y = shell.getCoordinateN(i).y - ORIGIN_Y;</span>
+<span class="fc" id="L111">            b.x = shell.getCoordinateN(i + 1).x - ORIGIN_X;</span>
+<span class="fc" id="L112">            b.y = shell.getCoordinateN(i + 1).y - ORIGIN_Y;</span>
+
+
+
+            // Addition to the list of coordinates of the future shadow polygon 
+
+<span class="fc" id="L118">            shadowPoints.add(new Coordinate(shell.getCoordinateN(i).x - ORIGIN_X,shell.getCoordinateN(i).y - ORIGIN_Y));</span>
+<span class="fc" id="L119">            shadowPoints.add(new Coordinate(projection(a, height, direction).x, projection(a, height, direction).y));</span>
+<span class="fc" id="L120">            shadowPoints.add(new Coordinate(projection(b, height, direction).x, projection(b, height, direction).y));</span>
+<span class="fc" id="L121">            shadowPoints.add(new Coordinate(shell.getCoordinateN(i+1).x - ORIGIN_X,shell.getCoordinateN(i+1).y - ORIGIN_Y));</span>
+<span class="fc" id="L122">            shadowPoints.add(new Coordinate(shell.getCoordinateN(i).x - ORIGIN_X,shell.getCoordinateN(i).y - ORIGIN_Y));</span>
+            
+            
+<span class="fc" id="L125">            shadowParts.add(factory.createPolygon(new LinearRing(new CoordinateArraySequence(shadowPoints.toArray(new Coordinate[shadowPoints.size()])), factory), null));</span>
+        
+
+        }
+
+        // The polygon representing the shadow of the building is created.
+
+<span class="fc" id="L132">       return polygon.getFactory().createMultiPolygon(shadowParts.toArray(new Polygon[shadowParts.size()]));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.3.201306030806</span></div></body></html>

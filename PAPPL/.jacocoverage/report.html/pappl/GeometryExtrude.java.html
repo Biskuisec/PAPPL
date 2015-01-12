@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>GeometryExtrude.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;PAPPL&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.html" class="el_package">pappl</a> &gt; <span class="el_source">GeometryExtrude.java</span></div><h1>GeometryExtrude.java</h1><pre class="source lang-java linenums">/*
+ * Copyright (C) 2013 IRSTV CNRS-FR-2488
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+
+package pappl;
+import com.vividsolutions.jts.algorithm.CGAlgorithms;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
+import com.vividsolutions.jts.geom.CoordinateSequenceFilter;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Polygon;
+import java.util.ArrayList;
+//import org.h2gis.h2spatialext.function.spatial.edit.ST_UpdateZ.UpdateZCoordinateSequenceFilter;
+
+/**
+ * This class is used to extrude a polygon or a linestring to a set of walls,
+ * roof, or floor using a height.
+ *
+ * @author Erwan Bocher
+ */
+public class GeometryExtrude {
+
+    
+
+<span class="nc" id="L43">    private GeometryExtrude() {</span>
+<span class="nc" id="L44">    }</span>
+    
+    /**
+     * Extrude the polygon as a collection of geometries
+     * The output geometryCollection contains the floor, the walls and the roof.
+     * @param polygon
+     * @param height
+     * @return 
+     */
+    public static GeometryCollection extrudePolygonAsGeometry(Polygon polygon, double height){
+<span class="nc" id="L54">        GeometryFactory factory = polygon.getFactory();</span>
+<span class="nc" id="L55">        Geometry[] geometries = new Geometry[3];        </span>
+        //Extract floor
+        //We process the exterior ring 
+<span class="nc" id="L58">        final LineString shell = getClockWise(polygon.getExteriorRing());</span>
+<span class="nc" id="L59">        ArrayList&lt;Polygon&gt; walls = new ArrayList&lt;Polygon&gt;();</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        for (int i = 1; i &lt; shell.getNumPoints(); i++) {</span>
+<span class="nc" id="L61">            walls.add(extrudeEdge(shell.getCoordinateN(i - 1), shell.getCoordinateN(i), height, factory));</span>
+        }
+
+<span class="nc" id="L64">        final int nbOfHoles = polygon.getNumInteriorRing();</span>
+<span class="nc" id="L65">        final LinearRing[] holes = new LinearRing[nbOfHoles];</span>
+<span class="nc bnc" id="L66" title="All 2 branches missed.">        for (int i = 0; i &lt; nbOfHoles; i++) {</span>
+<span class="nc" id="L67">            final LineString hole = getCounterClockWise(polygon.getInteriorRingN(i));</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">            for (int j = 1; j &lt; hole.getNumPoints(); j++) {</span>
+<span class="nc" id="L69">                walls.add(extrudeEdge(hole.getCoordinateN(j - 1),</span>
+                        hole.getCoordinateN(j), height, factory));
+            }
+<span class="nc" id="L72">            holes[i] = factory.createLinearRing(hole.getCoordinateSequence());            </span>
+        }
+        
+<span class="nc" id="L75">        geometries[0]= factory.createPolygon(factory.createLinearRing(shell.getCoordinateSequence()), holes);</span>
+<span class="nc" id="L76">        geometries[1]= factory.createMultiPolygon(walls.toArray(new Polygon[walls.size()]));</span>
+<span class="nc" id="L77">        geometries[2]= extractRoof(polygon, height);</span>
+<span class="nc" id="L78">        return polygon.getFactory().createGeometryCollection(geometries);</span>
+    }
+    
+     /**
+     * Extrude the linestring as a collection of geometries
+     * The output geometryCollection contains the floor, the walls and the roof.
+     * @param lineString
+     * @param height
+     * @return 
+     */
+    public static GeometryCollection extrudeLineStringAsGeometry(LineString lineString, double height){
+<span class="nc" id="L89">        Geometry[] geometries = new Geometry[3];        </span>
+<span class="nc" id="L90">        GeometryFactory factory = lineString.getFactory();</span>
+        //Extract the walls        
+<span class="nc" id="L92">        Coordinate[] coords = lineString.getCoordinates();</span>
+<span class="nc" id="L93">        Polygon[] walls = new Polygon[coords.length - 1];</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        for (int i = 0; i &lt; coords.length - 1; i++) {</span>
+<span class="nc" id="L95">            walls[i] = extrudeEdge(coords[i], coords[i + 1], height, factory);</span>
+        }
+<span class="nc" id="L97">        lineString.apply(new TranslateCoordinateSequenceFilter(0));</span>
+<span class="nc" id="L98">        geometries[0]= lineString;</span>
+<span class="nc" id="L99">        geometries[1]=  factory.createMultiPolygon(walls);        </span>
+<span class="nc" id="L100">        geometries[2]= extractRoof(lineString, height);</span>
+<span class="nc" id="L101">        return factory.createGeometryCollection(geometries);</span>
+    }
+    
+    /**
+     * Extract the linestring &quot;roof&quot;.
+     *
+     * @param lineString
+     * @param height
+     * @return
+     */
+    public static Geometry extractRoof(LineString lineString, double height) {
+<span class="nc" id="L112">        LineString result = (LineString) lineString.clone();</span>
+<span class="nc" id="L113">        result.apply(new TranslateCoordinateSequenceFilter(height));</span>
+<span class="nc" id="L114">        return result;</span>
+    }
+    
+    
+    
+    /**
+     * Extract the walls from a polygon
+     * @param polygon
+     * @param height
+     * @return 
+     */
+    public static MultiPolygon extractWalls(Polygon polygon, double height){
+<span class="nc" id="L126">        GeometryFactory factory = polygon.getFactory();</span>
+        //We process the exterior ring 
+<span class="nc" id="L128">        final LineString shell = getClockWise(polygon.getExteriorRing());</span>
+
+<span class="nc" id="L130">        ArrayList&lt;Polygon&gt; walls = new ArrayList&lt;Polygon&gt;();</span>
+<span class="nc bnc" id="L131" title="All 2 branches missed.">        for (int i = 1; i &lt; shell.getNumPoints(); i++) {</span>
+<span class="nc" id="L132">            walls.add(extrudeEdge(shell.getCoordinateN(i - 1), shell.getCoordinateN(i), height, factory));</span>
+        }
+
+        // We create the walls  for all holes 
+<span class="nc" id="L136">        int nbOfHoles = polygon.getNumInteriorRing();</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        for (int i = 0; i &lt; nbOfHoles; i++) {</span>
+<span class="nc" id="L138">            final LineString hole = getCounterClockWise(polygon.getInteriorRingN(i));</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">            for (int j = 1; j &lt; hole.getNumPoints(); j++) {</span>
+<span class="nc" id="L140">                walls.add(extrudeEdge(hole.getCoordinateN(j - 1),</span>
+                        hole.getCoordinateN(j), height, factory));
+            }
+        }
+<span class="nc" id="L144">        return polygon.getFactory().createMultiPolygon(walls.toArray(new Polygon[walls.size()]));</span>
+    }
+    
+    /**
+     * Extract the roof of a polygon
+     * 
+     * @param polygon
+     * @param height
+     * @return 
+     */
+    public static Polygon extractRoof(Polygon polygon, double height) {
+<span class="nc" id="L155">        GeometryFactory factory = polygon.getFactory();</span>
+<span class="nc" id="L156">        Polygon roofP = (Polygon) polygon.clone();</span>
+<span class="nc" id="L157">        roofP.apply(new TranslateCoordinateSequenceFilter(height));</span>
+<span class="nc" id="L158">        final LinearRing shell = factory.createLinearRing(getCounterClockWise(roofP.getExteriorRing()).getCoordinates());</span>
+<span class="nc" id="L159">        final int nbOfHoles = roofP.getNumInteriorRing();</span>
+<span class="nc" id="L160">        final LinearRing[] holes = new LinearRing[nbOfHoles];</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">        for (int i = 0; i &lt; nbOfHoles; i++) {</span>
+<span class="nc" id="L162">            holes[i] = factory.createLinearRing(getClockWise(</span>
+                    roofP.getInteriorRingN(i)).getCoordinates());
+        }
+<span class="nc" id="L165">        return factory.createPolygon(shell, holes);</span>
+    }
+
+    /**
+     * Extrude the LineString as a set of walls.
+     * @param lineString
+     * @param height
+     * @return
+     */
+    public static MultiPolygon extractWalls(LineString lineString, double height) {
+<span class="nc" id="L175">        GeometryFactory factory = lineString.getFactory();</span>
+        //Extract the walls        
+<span class="nc" id="L177">        Coordinate[] coords = lineString.getCoordinates();</span>
+<span class="nc" id="L178">        Polygon[] walls = new Polygon[coords.length - 1];</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">        for (int i = 0; i &lt; coords.length - 1; i++) {</span>
+<span class="nc" id="L180">            walls[i] = extrudeEdge(coords[i], coords[i + 1], height, factory);</span>
+        }
+<span class="nc" id="L182">        return lineString.getFactory().createMultiPolygon(walls);</span>
+    }
+
+    /**
+     * Reverse the LineString to be oriented clockwise.
+     * All NaN z values are replaced by a zero value.
+     * @param lineString
+     * @return 
+     */
+    private static LineString getClockWise(final LineString lineString) {
+<span class="nc" id="L192">        final Coordinate c0 = lineString.getCoordinateN(0);</span>
+<span class="nc" id="L193">        final Coordinate c1 = lineString.getCoordinateN(1);</span>
+<span class="nc" id="L194">        final Coordinate c2 = lineString.getCoordinateN(2);</span>
+<span class="nc" id="L195">        lineString.apply(new UpdateZCoordinateSequenceFilter(0, 3));</span>
+<span class="nc bnc" id="L196" title="All 2 branches missed.">        if (CGAlgorithms.computeOrientation(c0, c1, c2) == CGAlgorithms.CLOCKWISE) {</span>
+<span class="nc" id="L197">            return lineString;</span>
+        } else {            
+<span class="nc" id="L199">            return (LineString) lineString.reverse();</span>
+        }
+    }
+
+    /**
+     * Reverse the LineString to be oriented counter-clockwise.
+     * @param lineString
+     * @return 
+     */
+    private static LineString getCounterClockWise(final LineString lineString) {
+<span class="nc" id="L209">        final Coordinate c0 = lineString.getCoordinateN(0);</span>
+<span class="nc" id="L210">        final Coordinate c1 = lineString.getCoordinateN(1);</span>
+<span class="nc" id="L211">        final Coordinate c2 = lineString.getCoordinateN(2);</span>
+<span class="nc" id="L212">        lineString.apply(new UpdateZCoordinateSequenceFilter(0, 3));</span>
+<span class="nc bnc" id="L213" title="All 2 branches missed.">        if (CGAlgorithms.computeOrientation(c0, c1, c2) == CGAlgorithms.COUNTERCLOCKWISE) {</span>
+<span class="nc" id="L214">            return lineString;</span>
+        } else {
+<span class="nc" id="L216">            return (LineString) lineString.reverse();</span>
+        }
+    }
+
+    /**
+     * Reverse the polygon to be oriented clockwise
+     * @param polygon
+     * @return 
+     */
+    private static Polygon extractFloor(final Polygon polygon) {
+<span class="nc" id="L226">        GeometryFactory factory = polygon.getFactory();</span>
+<span class="nc" id="L227">        final LinearRing shell = factory.createLinearRing(getClockWise(</span>
+                polygon.getExteriorRing()).getCoordinates());
+<span class="nc" id="L229">        final int nbOfHoles = polygon.getNumInteriorRing();</span>
+<span class="nc" id="L230">        final LinearRing[] holes = new LinearRing[nbOfHoles];</span>
+<span class="nc bnc" id="L231" title="All 2 branches missed.">        for (int i = 0; i &lt; nbOfHoles; i++) {</span>
+<span class="nc" id="L232">            holes[i] = factory.createLinearRing(getCounterClockWise(</span>
+                    polygon.getInteriorRingN(i)).getCoordinates());
+        }
+<span class="nc" id="L235">        return factory.createPolygon(shell, holes);</span>
+    }     
+
+    /**
+     * Create a polygon corresponding to the wall.
+     * 
+     *
+     * @param beginPoint
+     * @param endPoint
+     * @param height
+     * @return
+     */
+    private static Polygon extrudeEdge(final Coordinate beginPoint,
+            Coordinate endPoint, final double height, GeometryFactory factory) {
+<span class="nc bnc" id="L249" title="All 2 branches missed.">        beginPoint.z = Double.isNaN(beginPoint.z) ? 0 : beginPoint.z;</span>
+<span class="nc bnc" id="L250" title="All 2 branches missed.">        endPoint.z = Double.isNaN(endPoint.z) ? 0 : endPoint.z;        </span>
+<span class="nc" id="L251">        return factory.createPolygon(new Coordinate[]{</span>
+            beginPoint,
+            new Coordinate(beginPoint.x, beginPoint.y, beginPoint.z
+            + height),
+            new Coordinate(endPoint.x, endPoint.y, endPoint.z
+            + height), endPoint, beginPoint});
+    }
+
+     
+    
+    /**
+     * Translate a geometry to a specific z value added to each vertexes.
+     *
+     */
+    public static class TranslateCoordinateSequenceFilter implements CoordinateSequenceFilter {
+
+<span class="nc" id="L267">        private boolean done = false;</span>
+        private final double z;
+
+<span class="nc" id="L270">        public TranslateCoordinateSequenceFilter(double z) {</span>
+<span class="nc" id="L271">            this.z = z;</span>
+<span class="nc" id="L272">        }</span>
+
+        @Override
+        public boolean isGeometryChanged() {
+<span class="nc" id="L276">            return true;</span>
+        }
+
+        @Override
+        public boolean isDone() {
+<span class="nc" id="L281">            return done;</span>
+        }
+
+        @Override
+        public void filter(CoordinateSequence seq, int i) {
+<span class="nc" id="L286">            Coordinate coord = seq.getCoordinate(i);</span>
+<span class="nc" id="L287">            double currentZ = coord.z;</span>
+<span class="nc bnc" id="L288" title="All 2 branches missed.">            if (!Double.isNaN(currentZ)) {</span>
+<span class="nc" id="L289">                seq.setOrdinate(i, 2, currentZ + z);</span>
+            }
+            else{
+<span class="nc" id="L292">                 seq.setOrdinate(i, 2, z);</span>
+            }
+<span class="nc bnc" id="L294" title="All 2 branches missed.">            if (i == seq.size()) {</span>
+<span class="nc" id="L295">                done = true;</span>
+            }
+<span class="nc" id="L297">        }</span>
+    }
+    
+    public static class UpdateZCoordinateSequenceFilter implements CoordinateSequenceFilter {
+
+<span class="nc" id="L302">        private boolean done = false;</span>
+        private final double z;
+        private final int condition;
+
+<span class="nc" id="L306">        public UpdateZCoordinateSequenceFilter(double z, int condition) {</span>
+<span class="nc" id="L307">            this.z = z;</span>
+<span class="nc" id="L308">            this.condition = condition;</span>
+<span class="nc" id="L309">        }</span>
+
+        @Override
+        public boolean isGeometryChanged() {
+<span class="nc" id="L313">            return true;</span>
+        }
+
+        @Override
+        public boolean isDone() {
+<span class="nc" id="L318">            return done;</span>
+        }
+
+        @Override
+        public void filter(CoordinateSequence seq, int i) {
+<span class="nc bnc" id="L323" title="All 2 branches missed.">            if (condition == 1) {</span>
+<span class="nc" id="L324">                seq.setOrdinate(i, 2, z);</span>
+<span class="nc bnc" id="L325" title="All 2 branches missed.">            } else if (condition == 2) {</span>
+<span class="nc" id="L326">                Coordinate coord = seq.getCoordinate(i);</span>
+<span class="nc" id="L327">                double currentZ = coord.z;</span>
+<span class="nc bnc" id="L328" title="All 2 branches missed.">                if (!Double.isNaN(currentZ)) {</span>
+<span class="nc" id="L329">                    seq.setOrdinate(i, 2, z);</span>
+                }
+<span class="nc bnc" id="L331" title="All 2 branches missed.">            } else if (condition == 3) {</span>
+<span class="nc" id="L332">                Coordinate coord = seq.getCoordinate(i);</span>
+<span class="nc" id="L333">                double currentZ = coord.z;</span>
+<span class="nc bnc" id="L334" title="All 2 branches missed.">                if (Double.isNaN(currentZ)) {</span>
+<span class="nc" id="L335">                    seq.setOrdinate(i, 2, z);</span>
+                } 
+<span class="nc" id="L337">            } else {</span>
+<span class="nc" id="L338">                done = true;</span>
+            }
+<span class="nc bnc" id="L340" title="All 2 branches missed.">            if (i == seq.size()) {</span>
+<span class="nc" id="L341">                done = true;</span>
+            }
+<span class="nc" id="L343">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.3.201306030806</span></div></body></html>

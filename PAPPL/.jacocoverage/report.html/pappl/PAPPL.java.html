@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PAPPL.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;PAPPL&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.html" class="el_package">pappl</a> &gt; <span class="el_source">PAPPL.java</span></div><h1>PAPPL.java</h1><pre class="source lang-java linenums">/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package pappl;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
+import java.util.ArrayList;
+import java.lang.Math.*;
+import java.util.Date;
+
+/**
+ *
+ * @author avinesse
+ */
+<span class="nc" id="L22">public class PAPPL {</span>
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        
+ 
+        /*ArrayList&lt;ArrayList&lt;Coordinate&gt;&gt; faces = new ArrayList&lt;&gt;();
+         ArrayList&lt;Coordinate&gt; sol = new ArrayList&lt;&gt;();
+         faces.add(sol);
+         ArrayList&lt;Coordinate&gt; plafond = new ArrayList&lt;&gt;();
+         faces.add(plafond);*/
+<span class="fc" id="L35">        Coordinate origine = new Coordinate(0, 0, 0);</span>
+<span class="fc" id="L36">        Cube cube = new Cube();</span>
+
+        //cube.construireCube(origine, 1);
+<span class="fc" id="L39">        Polygon carre = cube.construireBase(origine, 1);</span>
+
+
+/**
+ * On simule la position du soleil
+ */
+        
+        /*double altitude = (Math.PI) / 2;
+        double azimuth = Math.PI;
+
+        Shadow shadow = new Shadow(altitude, azimuth);
+
+        Coordinate direction = shadow.calculateDirection(altitude,azimuth);
+        double height = 5;
+
+
+
+/**
+ * création de l'ombre
+ */
+        //shadow.createShadow(carre, height,direction); 
+
+        /*Date now = new Date(new java.util.Date().getTime());
+        System.out.println(new java.util.Date().getTime());
+        //SunPosition soleil = new SunPosition(now);
+        double lat = 47.2484747;
+        double lng =  -1.5485036 ;
+        
+        
+        System.out.println(SunPosition.getPosition(now, lat, lng).get(0));
+        System.out.println(SunPosition.getPosition(now, lat, lng).get(1));*/
+<span class="fc" id="L70">        Shadow shadow = new Shadow(0,0);</span>
+<span class="fc" id="L71">        Coordinate direction = new Coordinate (0.5,0);</span>
+<span class="fc" id="L72">        shadow.createShadow(carre, 1, direction);</span>
+
+
+<span class="fc" id="L75">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.3.201306030806</span></div></body></html>
