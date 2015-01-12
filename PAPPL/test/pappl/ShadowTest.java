@@ -66,17 +66,27 @@ public class ShadowTest extends TestCase {
         Cube cube=new Cube();
         Shadow shadow = new Shadow(0.0738274274,0.84002696898487);
         Polygon base;
+        Polygon hole;
         Coordinate origine = new Coordinate (0,0);
-        base = cube.construireBase(origine,1);
+        Coordinate origineHole = new Coordinate (1,1);
+        base = cube.construireBase(origine,4);
+        LinearRing shell = (LinearRing) base.getExteriorRing();
+        hole = cube.construireBase(origineHole,2);
+        LinearRing[] holes = new LinearRing[1];
+        LinearRing holeRing = (LinearRing) hole.getExteriorRing();
+        holes[0]=holeRing;
+        Polygon test = new Polygon(shell,holes,GF);
+        System.out.println(test);
+        
         double height = 1;
         double height2 = 2;
         Coordinate direction = new Coordinate(0,-1);
         Polygon result;
         Polygon result2;
         Coordinate origineExpResult= new Coordinate(0,-1);
-        //result = shadow.createShadow(base, height, direction); 
-        result2 = shadow.createShadow(base, height2, direction); 
-        Polygon expResult;
+        result = shadow.createShadow(test, height, direction); 
+        //result2 = shadow.createShadow(base, height2, direction); 
+        //Polygon expResult;
         
         ArrayList<Coordinate> polygonPoints = new ArrayList<>();
         Coordinate p1 = new Coordinate(0,-2);
@@ -89,11 +99,12 @@ public class ShadowTest extends TestCase {
         polygonPoints.add(p4);
         polygonPoints.add(p1);
         Polygon expResult2 = GF.createPolygon(new LinearRing(new CoordinateArraySequence(polygonPoints.toArray(new Coordinate[polygonPoints.size()])), GF), null);
+        Polygon expResult = GF.createPolygon(new LinearRing(new CoordinateArraySequence(polygonPoints.toArray(new Coordinate[polygonPoints.size()])), GF), null);
     
         //expResult = cube.construireBase(origineExpResult,1);
 
-        //assertEquals(expResult,result);
-        assertEquals(expResult2,result2);
+        assertEquals(expResult,result);
+        //assertEquals(expResult2,result2);
     }
     
 }

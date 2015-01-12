@@ -36,7 +36,7 @@ public class PAPPL {
         Cube cube = new Cube();
 
         //cube.construireCube(origine, 1);
-        Polygon carre = cube.construireBase(origine, 1);
+        Polygon carre = cube.construireBase(origine, 4);
 
 
 /**
@@ -69,7 +69,8 @@ public class PAPPL {
         System.out.println(SunPosition.getPosition(now, lat, lng).get(1));*/
         Shadow shadow = new Shadow(0,0);
         Coordinate direction = new Coordinate (0,-1);
-        shadow.createShadow(carre, 2, direction);
+        shadow.createShadow(carre, 1, direction);
+        
 
 
     }
