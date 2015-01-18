@@ -12,6 +12,7 @@ import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
@@ -65,8 +66,8 @@ public class Shadow {
     public Coordinate calculateDirection(double altitude, double azimuth) {
         Coordinate direction = new Coordinate();
         double length = 1.0 / (Math.tan(altitude));
-        direction.x = -Math.cos(azimuth) * length;
-        direction.y = -Math.sin(azimuth) * length;
+        direction.x = -Math.cos(-azimuth) * length;
+        direction.y = -Math.sin(-azimuth) * length;
 
         return direction;
     }
@@ -103,7 +104,7 @@ public class Shadow {
         final LineString shell = polygon.getExteriorRing();
         // initializing the coordinates of the shadow
         Polygon[] shadows = new Polygon[shell.getNumPoints() - 1];
-     
+
         Coordinate a = new Coordinate(0, 0);
         Coordinate b = new Coordinate(0, 0);
         // Shade is calculated from the edges of the polygon, a and b are the ends of the edges
@@ -115,7 +116,6 @@ public class Shadow {
             b.y = shell.getCoordinateN(i + 1).y - ORIGIN_Y;
 
             // Addition to the list of coordinates of the future shadow polygon 
-
             shadowPoints.add(new Coordinate(shell.getCoordinateN(i).x - ORIGIN_X, shell.getCoordinateN(i).y - ORIGIN_Y));
             shadowPoints.add(new Coordinate(projection(a, height, direction).x, projection(a, height, direction).y));
             shadowPoints.add(new Coordinate(projection(b, height, direction).x, projection(b, height, direction).y));
@@ -132,41 +132,43 @@ public class Shadow {
         GeometryCollection geometryCollection = new GeometryCollection(shadows, factory);
 
         //union of all the polygons in the geometryCollection
-        Geometry finalBase = geometryCollection.buffer(0);
+        Polygon finalBase = (Polygon) geometryCollection.buffer(0);
 
         //exterior shell of the Polygon
-        Geometry finalGeom = finalBase.getBoundary();
-        LinearRing finalShell = (LinearRing) finalGeom;
+       
+        LineString finalGeom = (LineString) finalBase.getExteriorRing();
+        
+        LinearRing finalShell = new LinearRing(finalGeom.getCoordinateSequence(), factory);
 
-
+        //adding the holes
         int nbOfHoles = polygon.getNumInteriorRing();
         LinearRing[] holes = new LinearRing[nbOfHoles];
         for (int i = 0; i < nbOfHoles; i++) {
             final LineString hole = polygon.getInteriorRingN(i);
-            for (int j = 1; j < hole.getNumPoints(); j++) {
-                ArrayList<Coordinate> holePoints = new ArrayList<>();
-                a.x = hole.getCoordinateN(i).x - ORIGIN_X;
-                a.y = hole.getCoordinateN(i).y - ORIGIN_Y;
-                b.x = hole.getCoordinateN(i + 1).x - ORIGIN_X;
-                b.y = hole.getCoordinateN(i + 1).y - ORIGIN_Y;
-
-                // Addition to the list of coordinates of the future shadow polygon 
-
-                holePoints.add(new Coordinate(hole.getCoordinateN(i).x - ORIGIN_X, hole.getCoordinateN(i).y - ORIGIN_Y));
+            ArrayList<Coordinate> holePoints = new ArrayList<>();
+            for (int j = 0; j < hole.getNumPoints(); j++) {
+                a.x = hole.getCoordinateN(j).x - ORIGIN_X;
+                a.y = hole.getCoordinateN(j).y - ORIGIN_Y;
+ 
                 holePoints.add(new Coordinate(projection(a, height, direction).x, projection(a, height, direction).y));
-                holePoints.add(new Coordinate(projection(b, height, direction).x, projection(b, height, direction).y));
-                holePoints.add(new Coordinate(hole.getCoordinateN(i + 1).x - ORIGIN_X, hole.getCoordinateN(i + 1).y - ORIGIN_Y));
-                holePoints.add(new Coordinate(hole.getCoordinateN(i).x - ORIGIN_X, hole.getCoordinateN(i).y - ORIGIN_Y));
-                
-                LinearRing holePart = new LinearRing(new CoordinateArraySequence(holePoints.toArray(new Coordinate[holePoints.size()])), factory);
-                holes[i]=holePart;
+                System.out.println(holePoints);
+
             }
+            LinearRing holePart = new LinearRing(new CoordinateArraySequence(holePoints.toArray(new Coordinate[holePoints.size()])), factory);
+            CoordinateSequence coordSeq = hole.getCoordinateSequence();
+            LinearRing originalHole = new LinearRing(coordSeq,factory);
+            Polygon holePartArea = new Polygon(holePart,null, factory);
+            Polygon actualHole = new Polygon(originalHole,null,factory);
+            Polygon shadowHole = (Polygon) actualHole.intersection(holePartArea);
+            LineString outline = shadowHole.getExteriorRing();
+            CoordinateSequence coordSeqHole = outline.getCoordinateSequence();
+            LinearRing finalHole = new LinearRing(coordSeqHole,factory);
+            holes[i] = finalHole;
         }
-        
-        Polygon finalShadow = new Polygon(finalShell,holes,factory);
-        System.out.println(finalShadow);
+
+        Polygon finalShadow = new Polygon(finalShell, holes, factory);
+        //System.out.println(finalShadow);
         return finalShadow;
-        
 
     }
 }

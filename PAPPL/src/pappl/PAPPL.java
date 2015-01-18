@@ -14,7 +14,7 @@ import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import java.util.ArrayList;
 import java.lang.Math.*;
 import java.util.Date;
-import static org.junit.Assert.assertTrue;
+//import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -66,8 +66,8 @@ public class PAPPL {
  * création de l'ombre
  */
         //shadow.createShadow(carre, height,direction); 
-        Date now = new Date(1419090123235L);
-        //Date now = new Date(1419082923235L);
+        //Date now = new Date(1419090123235L);
+        Date now = new Date(1419082923235L);
         //System.out.println(new java.util.Date().getTime());
         SunPosition soleil = new SunPosition(now);
         double lat = 47.2484747;
@@ -80,7 +80,7 @@ public class PAPPL {
         Shadow shadow = new Shadow(0,0);
         Coordinate direction = shadow.calculateDirection(altitude, azimtuh);
         System.out.println(direction);
-        Polygon res = shadow.createShadow(bat, 4, direction);
+        Polygon res = shadow.createShadow(bat, 0.1 , direction);
         System.out.println(res);
         
         

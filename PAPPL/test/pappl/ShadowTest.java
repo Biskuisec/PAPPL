@@ -33,8 +33,8 @@ public class ShadowTest extends TestCase {
     public void testCalculateDirection() {
         System.out.println("calculateDirection");
         Shadow instance = new Shadow(0,0);
-        Coordinate direction1 = new Coordinate(0,-1);
-        Coordinate direction2 = new Coordinate(-Math.cos(Math.PI/4),-Math.cos(Math.PI/4));
+        Coordinate direction1 = new Coordinate(0,1);
+        Coordinate direction2 = new Coordinate(-Math.cos(-Math.PI/4),-Math.sin(-Math.PI/4));
         assertEquals(direction1.x, instance.calculateDirection((Math.PI)/4,(Math.PI)/2).x,0.000001);
         assertEquals(direction1.y, instance.calculateDirection((Math.PI)/4,(Math.PI)/2).y,0.000001);
         assertEquals(direction2.x, instance.calculateDirection((Math.PI)/4,(Math.PI)/4).x,0.000001);
